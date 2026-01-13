@@ -53,7 +53,7 @@ POST /commute-advice
 | duration_minutes   | number (optional)         | Expected commute duration (default 45)           |
 
 **Example:**
-```
+```json
 {
   "home": {
     "latitude": 28.5847,
@@ -73,7 +73,7 @@ POST /commute-advice
 ### Response Body
 
 **Example:**
-```
+```json
 {
   "risk_score": 45,
   "recommendation": "No change needed",
