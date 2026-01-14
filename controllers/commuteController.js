@@ -21,7 +21,7 @@ async function getCommuteAdvice(req, res, next) {
 
     // 1. Validation Logic
     if (!home || !office) return res.status(400).json({ error: "home and office required" });
-    if (typeof home.latitude === "undefined" || typeof office.latitude === "undefined") {
+    if (typeof home.latitude === "undefined" || typeof home.longitude === "undefined" || typeof office.latitude === "undefined" || typeof office.longitude === "undefined") {
       return res.status(400).json({ error: "latitude/longitude required" });
     }
 
