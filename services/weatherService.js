@@ -4,6 +4,14 @@ const { DateTime } = require("luxon");
 
 const cache = new NodeCache({ stdTTL: 600 }); 
 
+/**
+ * Constructs the API URLs for Open-Meteo Weather and Air Quality services.
+ * * @param {number} lat - Latitude of the location.
+ * @param {number} lon - Longitude of the location.
+ * @param {string} [timezone="auto"] - The timezone for the forecast (default is "auto").
+ * @returns {{weatherUrl: string, aqUrl: string}} An object containing the formatted URLs.
+ * @private
+ */
 function buildUrls(lat, lon, timezone = "auto") {
   const weatherVars = "temperature_2m,precipitation_probability,windspeed_10m,visibility";
   const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${weatherVars}&forecast_days=2&timezone=${timezone}`;
@@ -11,7 +19,16 @@ function buildUrls(lat, lon, timezone = "auto") {
   return { weatherUrl, aqUrl };
 }
 
-
+/**
+ * Fetches and caches weather and air quality forecast data.
+ * This function optimizes performance by using an in-memory cache to avoid 
+ * redundant external API calls within the TTL window.
+ * * @async
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lon - Longitude of the location.
+ * @throws {Error} Throws an error if the network request fails.
+ * @returns {Promise<Object>} The combined hourly forecast data for weather and AQI.
+ */
 async function fetchForecast(lat, lon) {
   const key = `${lat},${lon}`;
   let payload = cache.get(key);
@@ -29,7 +46,24 @@ async function fetchForecast(lat, lon) {
   return payload;
 }
 
-
+/**
+ * Retrieves a specific hourly data point from the forecast.
+ * It searches for an exact ISO time match. If an exact match is not found, 
+ * it performs a nearest-neighbor search to return the closest available data point.
+ * * @async
+ * @param {number} lat - Latitude of the location.
+ * @param {number} lon - Longitude of the location.
+ * @param {string} timeIso - The ISO 8601 timestamp for the requested hour.
+ * @returns {Promise<{
+ * time: string|null,
+ * temp: number|null,
+ * rain_prob: number|null,
+ * wind_speed: number|null,
+ * visibility: number|null,
+ * us_aqi: number|null,
+ * pm2_5: number|null
+ * }>} A merged object containing weather and air quality metrics for that hour.
+ */
 async function getHourlyPoint(lat, lon, timeIso) {
   const forecast = await fetchForecast(lat, lon);
   const times = forecast.weather.time || [];

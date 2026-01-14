@@ -1,3 +1,23 @@
+/**
+ * Computes a weighted Weather Risk Score based on environmental conditions.
+ * * The score is normalized between 0 and 100 and evaluates the following factors:
+ * - **AQI (Air Quality):** Significant health impact (+45 points)
+ * - **Rain:** Road safety and congestion impact (+30 points)
+ * - **Wind:** Vehicle stability and debris risk (+20 points)
+ * - **Visibility:** Collision risk factor (+10 points)
+ * - **Temperature:** Extreme cold discomfort/safety (+15 points)
+ * * @param {Object} point - The merged weather and AQI data for a specific time.
+ * @param {number|null} point.us_aqi - The US Air Quality Index value.
+ * @param {number|null} point.rain_prob - Probability of precipitation (0-100).
+ * @param {number|null} point.wind_speed - Wind speed in km/h.
+ * @param {number|null} point.visibility - Visibility distance in meters.
+ * @param {number|null} point.temp - Temperature in Celsius.
+ * * @returns {{
+ * score: number, 
+ * reasons: string[], 
+ * breakdown: {AQI: number, rain: number, wind: number, visibility: number, temp: number}
+ * }} An object containing the final score (capped at 100), descriptive reasons, and a numerical breakdown.
+ */
 function calculateRiskScore(point) {
   let score = 0;
   const reasons = [];

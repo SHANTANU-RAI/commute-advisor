@@ -3,16 +3,35 @@ const weatherService = require("../services/weatherService");
 const { calculateRiskScore } = require("../utils/scoring");
 const { midpoint } = require("../utils/mid_point");
 
-
+/**
+ * Main Controller to handle commute advice requests.
+ * * This function performs the following steps:
+ * 1. Validates input coordinates and timestamps.
+ * 2. Calculates the geographic midpoint of the commute for a representative weather sample.
+ * 3. Samples weather conditions across a 4-hour window (2 hours before and after the planned time).
+ * 4. Ranks departure times based on the lowest risk score.
+ * 5. Returns a structured recommendation with alternatives.
+ * * @async
+ * @param {import('express').Request} req - Express request object containing:
+ * @param {Object} req.body.home - {latitude, longitude}
+ * @param {Object} req.body.office - {latitude, longitude}
+ * @param {string} [req.body.planned_departure] - ISO timestamp or "leave now"
+ * @param {number} [req.body.duration_minutes=45] - Estimated travel time
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware for error handling.
+ * * @returns {Promise<void>} Sends a JSON response with risk analysis and recommendations.
+ */
 async function getCommuteAdvice(req, res, next) {
   try {
     const { home, office, planned_departure, duration_minutes = 45 } = req.body;
 
+    // 1. Validation Logic
     if (!home || !office) return res.status(400).json({ error: "home and office required" });
     if (typeof home.latitude === "undefined" || typeof office.latitude === "undefined") {
       return res.status(400).json({ error: "latitude/longitude required" });
     }
 
+    // Handle "leave now" or ISO strings
     let plannedDt;
     if (!planned_departure || planned_departure === "leave now") {
       plannedDt = DateTime.now();
@@ -23,8 +42,12 @@ async function getCommuteAdvice(req, res, next) {
     
     const plannedHour = plannedDt.startOf("hour");
 
+    // 2. Geographic Analysis
+    // Fetch weather for the midpoint to represent the average journey conditions
     const { lat: midLat, lon: midLon } = midpoint(home.latitude, home.longitude, office.latitude, office.longitude);
 
+    // 3. Multi-Window Risk Analysis
+    // Evaluate 5 departure times: planned, ±1 hour, ±2 hours
     const shifts = [-120, -60, 0, 60, 120];
 
     const evaluations = await Promise.all(shifts.map(async (shift) => {
@@ -40,17 +63,22 @@ async function getCommuteAdvice(req, res, next) {
       };
     }));
 
+    // 4. Recommendation Logic
+    // Sort by score, then by shift to prefer earlier departures on ties
     evaluations.sort((a, b) => (a.score - b.score) || (a.shift - b.shift));
     const best = evaluations[0];
     const plannedEval = evaluations.find(e => e.shift === 0);
 
     let recommendation = "No change needed";
     let recommended_departure = plannedHour.toISO();
+
+    // Recommend change only if the improvement is significant
     if (best.score + 5 < plannedEval.score) {
       recommended_departure = best.candidate_iso;
       recommendation = best.shift < 0 ? `Leave ${Math.abs(best.shift)} minutes earlier` : `Leave ${best.shift} minutes later`;
     }
 
+    // 5. Structured Response
     const response = {
       risk_score: plannedEval.score,
       recommendation,
