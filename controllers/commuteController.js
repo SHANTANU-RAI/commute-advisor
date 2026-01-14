@@ -19,7 +19,7 @@ async function getCommuteAdvice(req, res, next) {
   try {
     const { home, office, planned_departure, duration_minutes = 45 } = req.body;
 
-    // 1. Validation Logic
+    // Validation Logic
     if (!home || !office) return res.status(400).json({ error: "home and office required" });
     if (typeof home.latitude === "undefined" || typeof home.longitude === "undefined" || typeof office.latitude === "undefined" || typeof office.longitude === "undefined") {
       return res.status(400).json({ error: "latitude/longitude required" });
@@ -36,11 +36,11 @@ async function getCommuteAdvice(req, res, next) {
     
     const plannedHour = plannedDt.startOf("hour");
 
-    // 2. Geographic Analysis
+    
     // Fetch weather for the midpoint to represent the average journey conditions
     const { lat: midLat, lon: midLon } = midpoint(home.latitude, home.longitude, office.latitude, office.longitude);
 
-    // 3. Multi-Window Risk Analysis
+    
     // Evaluate 5 departure times: planned, ±1 hour, ±2 hours
     const shifts = [-120, -60, 0, 60, 120];
 
@@ -57,8 +57,7 @@ async function getCommuteAdvice(req, res, next) {
       };
     }));
 
-    // 4. Recommendation Logic
-    // Sort by score, then by shift to prefer earlier departures on ties
+    // Recommendation Logic
     evaluations.sort((a, b) => (a.score - b.score) || (a.shift - b.shift));
     const best = evaluations[0];
     const plannedEval = evaluations.find(e => e.shift === 0);
@@ -72,7 +71,7 @@ async function getCommuteAdvice(req, res, next) {
       recommendation = best.shift < 0 ? `Leave ${Math.abs(best.shift)} minutes earlier` : `Leave ${best.shift} minutes later`;
     }
 
-    // 5. Structured Response
+    // Response
     const response = {
       risk_score: plannedEval.score,
       recommendation,

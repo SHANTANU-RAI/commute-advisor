@@ -14,7 +14,7 @@ It combines:
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/SHANTANU-RAI/commute-advisor.git>
 cd commute-advisor
 ```
 
