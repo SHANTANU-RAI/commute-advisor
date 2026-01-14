@@ -1,4 +1,4 @@
-# 🚦 Weather-Based Commute Advisor – Backend
+# Weather-Based Commute Advisor – Backend
 
 This service analyzes weather and air quality conditions for a commuter's travel window and recommends whether they should change their departure time to reduce health and travel risk.
 
@@ -9,9 +9,8 @@ It combines:
 - A deterministic risk-scoring engine
 - A time-window comparison algorithm
 
----
 
-## 🛠 Setup Instructions
+## Setup Instructions
 
 ### 1. Clone the repository
 ```bash
@@ -34,9 +33,7 @@ The server runs on:
 http://localhost:3000
 ```
 
----
-
-## 📚 API Documentation
+## API Documentation
 
 Complete API documentation is available through **Swagger UI**.
 
@@ -52,9 +49,7 @@ This interactive documentation allows you to:
 
 All functions in the codebase are documented using **JSDoc** comments, providing detailed information about parameters, return types, and usage examples.
 
----
-
-## 📡 API Usage
+## API Usage
 
 ### Endpoint
 ```
@@ -85,8 +80,6 @@ POST /commute-advice
   "duration_minutes": 45
 }
 ```
-
----
 
 ### Response Body
 
@@ -160,9 +153,7 @@ POST /commute-advice
 }
 ```
 
----
-
-## 🧮 Weather Risk Scoring Logic
+## Weather Risk Scoring Logic
 
 Each commute window is evaluated using deterministic rules based on the forecasted conditions.
 
@@ -180,7 +171,7 @@ A structured breakdown is returned so users and systems can understand why a sco
 
 ---
 
-## ⏱ Departure Window Evaluation
+## Departure Window Evaluation
 
 Instead of evaluating only one time, the system evaluates **five possible departure windows**:
 ```
@@ -203,7 +194,7 @@ This allows the system to say:
 
 ---
 
-## 📍 Why We Use the Mid-Point Instead of Home or Office
+## Why We Use the Mid-Point Instead of Home or Office
 
 The service does not use only home or office weather.
 
@@ -214,9 +205,7 @@ Instead, it calculates:
 
 This better represents what the commuter experiences during the journey — not just at the start or end. It acts as a lightweight approximation of the full route without needing a routing API.
 
----
-
-## ⚖ Assumptions & Trade-offs
+## Assumptions & Trade-offs
 
 ### Assumptions
 
@@ -229,5 +218,3 @@ This better represents what the commuter experiences during the journey — not 
 - **Hourly resolution** was used because most free weather APIs do not provide minute-level forecasts.
 - **Midpoint sampling** was chosen instead of full route sampling to avoid calling a routing API and to keep latency low.
 - **Caching** is done using raw latitude & longitude. In a production system, rounding coordinates (e.g., 2 decimal places) would improve cache reuse for nearby users.
-
----

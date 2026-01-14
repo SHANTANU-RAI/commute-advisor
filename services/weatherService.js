@@ -21,8 +21,6 @@ function buildUrls(lat, lon, timezone = "auto") {
 
 /**
  * Fetches and caches weather and air quality forecast data.
- * This function optimizes performance by using an in-memory cache to avoid 
- * redundant external API calls within the TTL window.
  * * @async
  * @param {number} lat - Latitude of the location.
  * @param {number} lon - Longitude of the location.
@@ -48,8 +46,6 @@ async function fetchForecast(lat, lon) {
 
 /**
  * Retrieves a specific hourly data point from the forecast.
- * It searches for an exact ISO time match. If an exact match is not found, 
- * it performs a nearest-neighbor search to return the closest available data point.
  * * @async
  * @param {number} lat - Latitude of the location.
  * @param {number} lon - Longitude of the location.
@@ -93,7 +89,7 @@ async function getHourlyPoint(lat, lon, timeIso) {
     temp: w.temperature_2m ? w.temperature_2m[idx] : null,
     rain_prob: w.precipitation_probability ? w.precipitation_probability[idx] : null,
     wind_speed: w.windspeed_10m ? w.windspeed_10m[idx] : null,
-    visibility: w.visibility ? w.visibility[idx] : null, // meters
+    visibility: w.visibility ? w.visibility[idx] : null, 
     us_aqi: a.us_aqi ? a.us_aqi[idx] : null,
     pm2_5: a.pm2_5 ? a.pm2_5[idx] : null
   };

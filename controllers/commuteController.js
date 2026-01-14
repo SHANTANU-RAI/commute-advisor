@@ -5,12 +5,6 @@ const { midpoint } = require("../utils/mid_point");
 
 /**
  * Main Controller to handle commute advice requests.
- * * This function performs the following steps:
- * 1. Validates input coordinates and timestamps.
- * 2. Calculates the geographic midpoint of the commute for a representative weather sample.
- * 3. Samples weather conditions across a 4-hour window (2 hours before and after the planned time).
- * 4. Ranks departure times based on the lowest risk score.
- * 5. Returns a structured recommendation with alternatives.
  * * @async
  * @param {import('express').Request} req - Express request object containing:
  * @param {Object} req.body.home - {latitude, longitude}

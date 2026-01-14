@@ -1,11 +1,5 @@
 /**
  * Computes a weighted Weather Risk Score based on environmental conditions.
- * * The score is normalized between 0 and 100 and evaluates the following factors:
- * - **AQI (Air Quality):** Significant health impact (+45 points)
- * - **Rain:** Road safety and congestion impact (+30 points)
- * - **Wind:** Vehicle stability and debris risk (+20 points)
- * - **Visibility:** Collision risk factor (+10 points)
- * - **Temperature:** Extreme cold discomfort/safety (+15 points)
  * * @param {Object} point - The merged weather and AQI data for a specific time.
  * @param {number|null} point.us_aqi - The US Air Quality Index value.
  * @param {number|null} point.rain_prob - Probability of precipitation (0-100).
