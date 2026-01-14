@@ -36,6 +36,24 @@ http://localhost:3000
 
 ---
 
+## 📚 API Documentation
+
+Complete API documentation is available through **Swagger UI**.
+
+Once the server is running, visit:
+```
+http://localhost:3000/api-docs
+```
+
+This interactive documentation allows you to:
+- View all available endpoints
+- See request/response schemas
+- Test API calls directly from the browser
+
+All functions in the codebase are documented using **JSDoc** comments, providing detailed information about parameters, return types, and usage examples.
+
+---
+
 ## 📡 API Usage
 
 ### Endpoint
